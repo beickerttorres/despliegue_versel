@@ -6,11 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='clave-insegura-solo-para-desarrollo')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'despliegue-versel-2.vercel.app',
-]
+ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
