@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ proyecto.nombre }} — GestorPro{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="{% url 'lista_proyectos' %}" class="breadcrumb-back"><i class="bi bi-arrow-left"></i> Proyectos</a>
+    <h1 class="page-title">{{ proyecto.nombre }}</h1>
+    <div class="d-flex align-items-center gap-2 mt-1">
+      <span class="badge-estado estado-proyecto-{{ proyecto.estado }}">{{ proyecto.get_estado_display }}</span>
+      {% if proyecto.fecha_fin %}
+        <span class="text-muted small"><i class="bi bi-calendar3"></i> Entrega: {{ proyecto.fecha_fin|date:"d/m/Y" }}</span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'crear_tarea' proyecto.pk %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> Nueva Tarea
+    </a>
+    {% if proyecto.creado_por == request.user %}
+      <a href="{% url 'editar_proyecto' proyecto.pk %}" class="btn btn-outline-secondary">
+        <i class="bi bi-pencil"></i> Editar
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{% if proyecto.descripcion %}
+  <p class="project-description">{{ proyecto.descripcion }}</p>
+{% endif %}
+
+<!-- Progreso -->
+<div class="progress-section">
+  <div class="d-flex justify-content-between mb-1">
+    <span class="small text-muted">Progreso general</span>
+    <span class="small fw-semibold">{{ proyecto.porcentaje_avance }}%</span>
+  </div>
+  <div class="progress-bar-full">
+    <div class="progress-fill" style="width: {{ proyecto.porcentaje_avance }}%"></div>
+  </div>
+  <div class="progress-stats">
+    <span>{{ proyecto.tareas_completadas }} completadas</span>
+    <span>{{ proyecto.total_tareas }} en total</span>
+  </div>
+</div>
+
+<!-- Columnas Kanban -->
+<div class="kanban-board">
+  {% for estado, etiqueta in tareas.model.ESTADO_CHOICES %}
+  <div class="kanban-column">
+    <div class="kanban-header kanban-{{ estado }}">
+      <span>{{ etiqueta }}</span>
+      <span class="kanban-count">{{ tareas|length }}</span>
+    </div>
+    <div class="kanban-cards">
+      {% for tarea in tareas %}
+        {% if tarea.estado == estado %}
+        <div class="kanban-card">
+          <div class="kanban-card-top">
+            <span class="prioridad-badge prioridad-{{ tarea.prioridad }}">{{ tarea.get_prioridad_display }}</span>
+          </div>
+          <p class="kanban-card-title">{{ tarea.titulo }}</p>
+          {% if tarea.descripcion %}
+            <p class="kanban-card-desc">{{ tarea.descripcion|truncatechars:80 }}</p>
+          {% endif %}
+          <div class="kanban-card-footer">
+            <div class="kanban-assignee">
+              {% if tarea.asignado_a %}
+                <div class="mini-avatar">{{ tarea.asignado_a.first_name|first|upper }}{{ tarea.asignado_a.last_name|first|upper }}</div>
+                <span>{{ tarea.asignado_a.get_full_name|default:tarea.asignado_a.username }}</span>
+              {% else %}
+                <span class="text-muted">Sin asignar</span>
+              {% endif %}
+            </div>
+            <div class="kanban-actions">
+              <a href="{% url 'editar_tarea' tarea.pk %}" class="action-btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'eliminar_tarea' tarea.pk %}" class="action-btn-sm danger" title="Eliminar"><i class="bi bi-trash"></i></a>
+            </div>
+          </div>
+          {% if tarea.fecha_limite %}
+            <div class="kanban-fecha"><i class="bi bi-calendar3"></i> {{ tarea.fecha_limite|date:"d/m/Y" }}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+      {% empty %}
+      {% endfor %}
+      {% comment %}Mensaje vacío por columna{% endcomment %}
+      {% with count=0 %}
+        {% for tarea in tareas %}{% if tarea.estado == estado %}{% endif %}{% endfor %}
+      {% endwith %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

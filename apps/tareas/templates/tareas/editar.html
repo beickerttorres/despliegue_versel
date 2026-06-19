@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Editar Tarea — GestorPro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="breadcrumb-back"><i class="bi bi-arrow-left"></i> {{ proyecto.nombre }}</a>
+    <h1 class="page-title">Editar Tarea</h1>
+  </div>
+</div>
+<div class="form-wrapper">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 mb-3">
+        <label class="form-label">{{ form.titulo.label }}</label>
+        {{ form.titulo }}
+        {% if form.titulo.errors %}<div class="invalid-feedback d-block">{{ form.titulo.errors.0 }}</div>{% endif %}
+      </div>
+      <div class="col-12 mb-3">
+        <label class="form-label">{{ form.descripcion.label }}</label>
+        {{ form.descripcion }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.asignado_a.label }}</label>
+        {{ form.asignado_a }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.fecha_limite.label }}</label>
+        {{ form.fecha_limite }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.prioridad.label }}</label>
+        {{ form.prioridad }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.estado.label }}</label>
+        {{ form.estado }}
+      </div>
+    </div>
+    <div class="form-actions">
+      <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar cambios</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

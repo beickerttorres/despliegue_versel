@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Proyecto — GestorPro{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="breadcrumb-back"><i class="bi bi-arrow-left"></i> {{ proyecto.nombre }}</a>
+    <h1 class="page-title">Editar Proyecto</h1>
+  </div>
+</div>
+
+<div class="form-wrapper">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-8 mb-3">
+        <label class="form-label">{{ form.nombre.label }}</label>
+        {{ form.nombre }}
+        {% if form.nombre.errors %}<div class="invalid-feedback d-block">{{ form.nombre.errors.0 }}</div>{% endif %}
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">{{ form.estado.label }}</label>
+        {{ form.estado }}
+      </div>
+      <div class="col-12 mb-3">
+        <label class="form-label">{{ form.descripcion.label }}</label>
+        {{ form.descripcion }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.fecha_inicio.label }}</label>
+        {{ form.fecha_inicio }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.fecha_fin.label }}</label>
+        {{ form.fecha_fin }}
+      </div>
+      <div class="col-12 mb-3">
+        <label class="form-label">{{ form.miembros.label }}</label>
+        <div class="members-checkboxes">{{ form.miembros }}</div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar cambios</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

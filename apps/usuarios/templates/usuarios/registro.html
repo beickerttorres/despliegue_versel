@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro — GestorPro{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card auth-card-wide">
+    <div class="auth-brand">
+      <i class="bi bi-kanban-fill"></i>
+      <h1>Crear cuenta</h1>
+      <p>Únete y empieza a gestionar tus proyectos</p>
+    </div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="row">
+        {% for field in form %}
+          <div class="col-md-{% if field.name == 'username' or field.name == 'email' or field.name == 'cargo' %}12{% else %}6{% endif %} mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors.0 }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn btn-primary w-100 mt-1">
+        <i class="bi bi-person-plus"></i> Crear cuenta
+      </button>
+    </form>
+    <p class="auth-footer">
+      ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

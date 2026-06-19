@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Mis Tareas — GestorPro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Mis Tareas</h1>
+    <p class="page-subtitle">{{ tareas.count }} tarea{{ tareas.count|pluralize }} asignada{{ tareas.count|pluralize }}</p>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <form method="get" class="d-flex gap-2 flex-wrap">
+    <select name="estado" class="form-select filter-select">
+      <option value="">Todos los estados</option>
+      {% for valor, etiqueta in estados %}
+        <option value="{{ valor }}" {% if estado_filtro == valor %}selected{% endif %}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <select name="prioridad" class="form-select filter-select">
+      <option value="">Todas las prioridades</option>
+      {% for valor, etiqueta in prioridades %}
+        <option value="{{ valor }}" {% if prioridad_filtro == valor %}selected{% endif %}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-funnel"></i> Filtrar</button>
+    {% if estado_filtro or prioridad_filtro %}
+      <a href="{% url 'lista_tareas' %}" class="btn btn-outline-secondary"><i class="bi bi-x"></i> Limpiar</a>
+    {% endif %}
+  </form>
+</div>
+
+{% if tareas %}
+  <div class="task-table-wrapper">
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>Tarea</th>
+          <th>Proyecto</th>
+          <th>Prioridad</th>
+          <th>Estado</th>
+          <th>Fecha límite</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tarea in tareas %}
+        <tr>
+          <td class="task-title-cell">{{ tarea.titulo }}</td>
+          <td><a href="{% url 'detalle_proyecto' tarea.proyecto.pk %}">{{ tarea.proyecto.nombre }}</a></td>
+          <td><span class="prioridad-badge prioridad-{{ tarea.prioridad }}">{{ tarea.get_prioridad_display }}</span></td>
+          <td><span class="badge-estado estado-{{ tarea.estado }}">{{ tarea.get_estado_display }}</span></td>
+          <td>{% if tarea.fecha_limite %}{{ tarea.fecha_limite|date:"d/m/Y" }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+          <td class="actions-cell">
+            <a href="{% url 'editar_tarea' tarea.pk %}" class="action-btn" title="Editar"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'eliminar_tarea' tarea.pk %}" class="action-btn danger" title="Eliminar"><i class="bi bi-trash"></i></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="empty-state">
+    <i class="bi bi-check2-all"></i>
+    <h3>Sin tareas</h3>
+    <p>No tienes tareas asignadas{% if estado_filtro or prioridad_filtro %} con esos filtros{% endif %}.</p>
+  </div>
+{% endif %}
+{% endblock %}

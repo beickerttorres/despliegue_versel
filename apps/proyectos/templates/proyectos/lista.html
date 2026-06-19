@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Proyectos — GestorPro{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Proyectos</h1>
+    <p class="page-subtitle">{{ proyectos.count }} proyecto{{ proyectos.count|pluralize }} encontrado{{ proyectos.count|pluralize }}</p>
+  </div>
+  <a href="{% url 'crear_proyecto' %}" class="btn btn-primary">
+    <i class="bi bi-plus-lg"></i> Nuevo Proyecto
+  </a>
+</div>
+
+<!-- Filtros -->
+<div class="filters-bar">
+  <form method="get" class="d-flex gap-2 flex-wrap">
+    <input type="text" name="q" value="{{ q }}" class="form-control filter-input" placeholder="Buscar proyecto...">
+    <select name="estado" class="form-select filter-select">
+      <option value="">Todos los estados</option>
+      {% for valor, etiqueta in estados %}
+        <option value="{{ valor }}" {% if estado_filtro == valor %}selected{% endif %}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Filtrar</button>
+    {% if q or estado_filtro %}
+      <a href="{% url 'lista_proyectos' %}" class="btn btn-outline-secondary"><i class="bi bi-x"></i> Limpiar</a>
+    {% endif %}
+  </form>
+</div>
+
+{% if proyectos %}
+  <div class="projects-grid">
+    {% for proyecto in proyectos %}
+    <div class="project-card">
+      <div class="project-card-header">
+        <span class="badge-estado estado-proyecto-{{ proyecto.estado }}">{{ proyecto.get_estado_display }}</span>
+        <div class="project-card-actions">
+          <a href="{% url 'editar_proyecto' proyecto.pk %}" class="action-btn" title="Editar"><i class="bi bi-pencil"></i></a>
+          <a href="{% url 'eliminar_proyecto' proyecto.pk %}" class="action-btn danger" title="Eliminar"><i class="bi bi-trash"></i></a>
+        </div>
+      </div>
+      <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="project-card-body">
+        <h3 class="project-card-title">{{ proyecto.nombre }}</h3>
+        {% if proyecto.descripcion %}
+          <p class="project-card-desc">{{ proyecto.descripcion|truncatechars:90 }}</p>
+        {% endif %}
+      </a>
+      <div class="project-card-footer">
+        <div class="project-stats">
+          <span><i class="bi bi-check2-square"></i> {{ proyecto.tareas_completadas }}/{{ proyecto.total_tareas }}</span>
+          {% if proyecto.fecha_fin %}
+            <span><i class="bi bi-calendar3"></i> {{ proyecto.fecha_fin|date:"d/m/Y" }}</span>
+          {% endif %}
+        </div>
+        <div class="progress-bar-mini mt-2">
+          <div class="progress-fill" style="width: {{ proyecto.porcentaje_avance }}%"></div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <i class="bi bi-folder-plus"></i>
+    <h3>No hay proyectos</h3>
+    <p>{% if q or estado_filtro %}No se encontraron proyectos con ese filtro.{% else %}Crea tu primer proyecto para empezar.{% endif %}</p>
+    <a href="{% url 'crear_proyecto' %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> Crear proyecto
+    </a>
+  </div>
+{% endif %}
+{% endblock %}

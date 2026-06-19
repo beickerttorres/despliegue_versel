@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Proyecto — GestorPro{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <a href="{% url 'lista_proyectos' %}" class="breadcrumb-back"><i class="bi bi-arrow-left"></i> Proyectos</a>
+    <h1 class="page-title">Eliminar Proyecto</h1>
+  </div>
+</div>
+<div class="confirm-delete-card">
+  <div class="confirm-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+  <h3>¿Eliminar "{{ proyecto.nombre }}"?</h3>
+  <p>Esta acción es permanente. Se eliminarán también todas las tareas asociadas ({{ proyecto.total_tareas }} tarea{{ proyecto.total_tareas|pluralize }}).</p>
+  <form method="post" class="d-flex gap-2 justify-content-center mt-3">
+    {% csrf_token %}
+    <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Sí, eliminar</button>
+  </form>
+</div>
+{% endblock %}

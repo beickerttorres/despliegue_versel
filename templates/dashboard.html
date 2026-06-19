@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — GestorPro{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Bienvenido, {{ user.first_name|default:user.username }}</p>
+  </div>
+  <a href="{% url 'crear_proyecto' %}" class="btn btn-primary">
+    <i class="bi bi-plus-lg"></i> Nuevo Proyecto
+  </a>
+</div>
+
+<!-- Stats cards -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="bi bi-folder2-open"></i></div>
+    <div class="stat-info">
+      <span class="stat-number">{{ total_proyectos }}</span>
+      <span class="stat-label">Total proyectos</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="bi bi-activity"></i></div>
+    <div class="stat-info">
+      <span class="stat-number">{{ proyectos_activos }}</span>
+      <span class="stat-label">Proyectos activos</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange"><i class="bi bi-hourglass-split"></i></div>
+    <div class="stat-info">
+      <span class="stat-number">{{ tareas_pendientes }}</span>
+      <span class="stat-label">Tareas pendientes</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon purple"><i class="bi bi-check2-circle"></i></div>
+    <div class="stat-info">
+      <span class="stat-number">{{ tareas_completadas }}</span>
+      <span class="stat-label">Tareas completadas</span>
+    </div>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <!-- Proyectos recientes -->
+  <div class="card-section">
+    <div class="section-header">
+      <h2>Proyectos recientes</h2>
+      <a href="{% url 'lista_proyectos' %}" class="link-ver-mas">Ver todos <i class="bi bi-arrow-right"></i></a>
+    </div>
+    {% if proyectos_recientes %}
+      <div class="project-list">
+        {% for proyecto in proyectos_recientes %}
+        <a href="{% url 'detalle_proyecto' proyecto.pk %}" class="project-item">
+          <div class="project-item-left">
+            <div class="project-dot estado-{{ proyecto.estado }}"></div>
+            <div>
+              <span class="project-name">{{ proyecto.nombre }}</span>
+              <span class="project-meta">{{ proyecto.total_tareas }} tarea{{ proyecto.total_tareas|pluralize }}</span>
+            </div>
+          </div>
+          <div class="project-progress">
+            <div class="progress-bar-mini">
+              <div class="progress-fill" style="width: {{ proyecto.porcentaje_avance }}%"></div>
+            </div>
+            <span class="progress-pct">{{ proyecto.porcentaje_avance }}%</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state-small">
+        <i class="bi bi-folder-plus"></i>
+        <p>No hay proyectos aún. <a href="{% url 'crear_proyecto' %}">Crea uno</a>.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Mis tareas próximas -->
+  <div class="card-section">
+    <div class="section-header">
+      <h2>Mis tareas próximas</h2>
+      <a href="{% url 'lista_tareas' %}" class="link-ver-mas">Ver todas <i class="bi bi-arrow-right"></i></a>
+    </div>
+    {% if mis_tareas %}
+      <div class="task-list">
+        {% for tarea in mis_tareas %}
+        <div class="task-item">
+          <div class="task-prioridad prioridad-{{ tarea.prioridad }}"></div>
+          <div class="task-info">
+            <span class="task-titulo">{{ tarea.titulo }}</span>
+            <span class="task-proyecto">{{ tarea.proyecto.nombre }}</span>
+          </div>
+          <div class="task-right">
+            <span class="badge-estado estado-{{ tarea.estado }}">{{ tarea.get_estado_display }}</span>
+            {% if tarea.fecha_limite %}
+              <span class="task-fecha">{{ tarea.fecha_limite|date:"d M" }}</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state-small">
+        <i class="bi bi-check2-all"></i>
+        <p>¡Sin tareas pendientes! Todo al día.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

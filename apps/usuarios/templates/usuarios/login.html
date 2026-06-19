@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar sesión — GestorPro{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <i class="bi bi-kanban-fill"></i>
+      <h1>GestorPro</h1>
+      <p>Gestión de proyectos colaborativa</p>
+    </div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-3">
+          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <div class="invalid-feedback d-block">{{ field.errors.0 }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary w-100 mt-2">
+        <i class="bi bi-box-arrow-in-right"></i> Ingresar
+      </button>
+    </form>
+    <p class="auth-footer">
+      ¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
